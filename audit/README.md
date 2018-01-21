@@ -15,13 +15,13 @@
 ## Code Review
 
 * [ ] [code-review/SandalStraps_coll.md](code-review/SandalStraps_coll.md)
-  * [ ] contract ReentryProtected
-  * [ ] contract OwnedAbstract
-  * [ ] contract Owned is OwnedAbstract
-  * [ ] interface OwningItfc
-  * [ ] interface WithdrawableMinItfc
-  * [ ] contract RegBaseAbstract
-  * [ ] contract RegBase is Owned, RegBaseAbstract
+  * [x] contract ReentryProtected
+  * [x] contract OwnedAbstract
+  * [x] contract Owned is OwnedAbstract
+  * [x] interface OwningItfc
+  * [x] interface WithdrawableMinItfc
+  * [x] contract RegBaseAbstract
+  * [x] contract RegBase is Owned, RegBaseAbstract
   * [ ] contract Factory is RegBase
   * [ ] contract Registrar is RegBase
   * [ ] contract RegistrarFactory is Factory
@@ -29,7 +29,7 @@
   * [ ] contract ValueFactory is Factory
   * [ ] contract BytesMap is RegBase
   * [ ] contract BytesMapFactory is Factory
-  * [ ] contract Value is RegBase
-  * [ ] contract ValueFactory is Factory
+  * [x] contract Value is RegBase (duplicate)
+  * [x] contract ValueFactory is Factory (duplicate)
   * [ ] contract SandalStraps is ReentryProtected, RegBase, OwningItfc, WithdrawableMinItfc
   * [ ] contract SandalStrapsFactory is Factory

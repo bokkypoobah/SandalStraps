@@ -38,6 +38,7 @@ Contracts included are:
 
 \******************************************************************************/
 
+// BK Ok
 pragma solidity ^0.4.17;
 
 
@@ -61,9 +62,11 @@ GNU lesser General Public License for more details.
 
 \******************************************************************************/
 
+// BK Ok
 contract ReentryProtected
 {
     // The reentry protection state mutex.
+    // BK Ok
     bool __reMutex;
 
     // This modifier can be used on functions with external calls to
@@ -72,11 +75,17 @@ contract ReentryProtected
     //   Protected functions must have only one point of exit.
     //   Protected functions cannot use the `return` keyword
     //   Protected functions return values must be through return parameters.
+    // BK Ok
     modifier preventReentry() {
+        // BK Ok
         require(!__reMutex);
+        // BK Ok
         __reMutex = true;
+        // BK Ok
         _;
+        // BK Ok
         delete __reMutex;
+        // BK Ok
         return;
     }
 
@@ -84,8 +93,11 @@ contract ReentryProtected
     // to protect against reentry if a `preventReentry` function has already
     // set the mutex. This prevents the contract from being reenter under a
     // different memory context which can break state variable integrity.
+    // BK Ok
     modifier noReentry() {
+        // BK Ok
         require(!__reMutex);
+        // BK Ok
         _;
     }
 }
@@ -111,6 +123,7 @@ See MIT Licence for further details.
 
 \******************************************************************************/
 
+// BK Ok
 contract OwnedAbstract {
 
 //
@@ -118,24 +131,31 @@ contract OwnedAbstract {
 //
 
     /// @return The address of the contract's owner
+    // BK Ok
 	address public owner;
 
 	/// @dev optional
 	/// @return An address which can accept ownership.
+	// BK Ok
 	address public newOwner;
 
 	/// @dev Logged on initiation of change owner address
+	// BK Ok - Event
     event ChangeOwnerTo(address indexed _newOwner);
 
     /// @dev Logged on change of owner address
+    // BK OK - Event
     event ChangedOwner(address indexed _oldOwner, address indexed _newOwner);
 
 //
 // Modifiers
 //
 
+    // BK Ok
     modifier onlyOwner {
+        // BK Ok
 		require (msg.sender == owner);
+		// BK Ok
 		_;
 	}
 	
@@ -146,35 +166,49 @@ contract OwnedAbstract {
     /// @notice Initiate a change of owner to `_newOwner`
     /// @param _newOwner The address to which ownership is to be transfered
     /// @return A boolean success value
+    // BK Ok
     function changeOwner(address _newOwner) public returns (bool);
 
     /// @dev optional
     /// @notice Finalise change of ownership to newOwner
     /// @return A boolean success value
+    // BK Ok
     function acceptOwnership() public returns (bool);
 }
 
 
 // Example implementation.
+// BK NOTE - `owner` is not assigned to `msg.sender` in the constructor as normally done
+// BK Ok
 contract Owned is OwnedAbstract{
 
+    // BK Ok - Only current owner can execute
 	function changeOwner(address _newOwner)
 		public
+		// BK Ok
 		onlyOwner
 		returns (bool)
 	{
+	    // BK Ok
 		newOwner = _newOwner;
+		// BK Ok - Log event
 	    ChangeOwnerTo(_newOwner);
+	    // BK Ok
 		return true;
 	}
 
+    // BK Ok - Only new owner can execute
 	function acceptOwnership()
 		public
 		returns (bool)
 	{
+	    // BK Ok
 		require(msg.sender == newOwner);
+		// BK Ok - Log event
 	    ChangedOwner(owner, msg.sender);
+	    // BK Ok
 		owner = msg.sender;
+		// BK Ok
 		return true;
 	}
 }
@@ -203,17 +237,21 @@ Change Log
 * Added OwningItfc
 \*****************************************************************************/
 
+// BK Ok
 interface OwningItfc
 {
     /// @dev Logged when the contract accepts ownership of another contract.
+    // BK Ok - Event
     event ReceivedOwnership(address indexed _kAddr);
 
     /// @dev Logged when the contract initiates an ownership change in a
     /// contract it owns.
+    // BK Ok - Event
     event ChangeOwnerOf(address indexed _kAddr, address indexed _owner);
 
     /// @notice Contract to recieve ownership of `_kAddr`
     /// @param _kAddr An address of an `Owned` contract
+    // BK Ok
     function receiveOwnershipOf(address _kAddr) public returns (bool);
 
     /// @notice Change the owner of the owned contract `_kAddr` to `_owner`
@@ -221,6 +259,7 @@ interface OwningItfc
     /// @param _owner The address of the new owner
     /// @dev could be used to migrate to an upgraded SandalStraps
     /// @return bool value indicating success
+    // BK Ok
     function changeOwnerOf(address _kAddr, address _owner)
         public returns (bool);
 }
@@ -249,6 +288,7 @@ See MIT Licence for further details.
 
 // The minimum interface supporting pull payments with deposits and withdrawl
 // events
+// BK Ok
 interface WithdrawableMinItfc
 {
 //
@@ -258,16 +298,19 @@ interface WithdrawableMinItfc
     /// @dev Logged upon receiving a deposit
     /// @param _from The address from which value has been recieved
     /// @param _value The value of ether received
+    // BK Ok - Event
     event Deposit(address indexed _from, uint _value);
     
     /// @dev Logged upon a withdrawal
     /// @param _from the address accounted to have owned the ether
     /// @param _to Address to which value was sent
     /// @param _value The value in ether which was withdrawn
+    // BK Ok - Event
     event Withdrawal(address indexed _from, address indexed _to, uint _value);
 
     /// @notice withdraw total balance from account `msg.sender`
     /// @return success
+    // BK Ok
     function withdrawAll() public returns (bool);
 }
 
@@ -304,16 +347,19 @@ Release notes:
 
 \******************************************************************************/
 
+// BK Ok
 contract RegBaseAbstract
 {
     /// @dev A static identifier, set in the constructor and used for registrar
     /// lookup
     /// @return Registrar name SandalStraps registrars
+    // BK Ok
     bytes32 public regName;
 
     /// @dev An general purpose resource such as short text or a key to a
     /// string in a StringsMap
     /// @return resource
+    // BK Ok
     bytes32 public resource;
 
 //
@@ -321,6 +367,7 @@ contract RegBaseAbstract
 //
 
     /// @dev Logged on change of resource
+    // BK Ok - Event
     event ChangedResource(bytes32 indexed _resource);
 
 //
@@ -328,20 +375,24 @@ contract RegBaseAbstract
 //
 
     /// @notice Will selfdestruct the contract
+    // BK Ok
     function destroy() public;
 
     /// @notice Change the resource to `_resource`
     /// @param _resource A key or short text to be stored as the resource.
+    // BK Ok
     function changeResource(bytes32 _resource) public returns (bool);
 }
 
 
+// BK Ok
 contract RegBase is Owned, RegBaseAbstract
 {
 //
 // Constants
 //
 
+    // BK Ok
     bytes32 constant public VERSION = "RegBase v0.4.0";
 
 //
@@ -355,32 +406,44 @@ contract RegBase is Owned, RegBaseAbstract
     /// owner
     /// @dev On 0x0 value for owner, ownership precedence is:
     /// `_owner` else `_creator` else msg.sender
+    // BK Ok - Constructor
     function RegBase(address _creator, bytes32 _regName, address _owner)
         public
     {
+        // BK Ok
         require(_regName != 0x0);
+        // BK Ok
         regName = _regName;
+        // BK Ok
         owner = _owner != 0x0 ? _owner : 
                 _creator != 0x0 ? _creator : msg.sender;
     }
     
     /// @notice Will selfdestruct the contract
+    // BK Ok - Only owner can execute
     function destroy()
         public
+        // BK Ok
         onlyOwner
     {
+        // BK Ok - Funds returned to owner
         selfdestruct(msg.sender);
     }
     
     /// @notice Change the resource to `_resource`
     /// @param _resource A key or short text to be stored as the resource.
+    // BK Ok - Only owner can execute
     function changeResource(bytes32 _resource)
         public
+        // BK Ok
         onlyOwner
         returns (bool)
     {
+        // BK Ok
         resource = _resource;
+        // BK Ok
         ChangedResource(_resource);
+        // BK Ok
         return true;
     }
 }
@@ -423,6 +486,7 @@ Release Notes
 * Changed _fee to _price
 \******************************************************************************/
 
+// BK Ok
 contract Factory is RegBase
 {
 //
@@ -443,6 +507,7 @@ contract Factory is RegBase
 //
 
     /// @return The payment in wei required to create the product contract.
+    // BK Ok
     uint public value;
 
 //
@@ -450,12 +515,15 @@ contract Factory is RegBase
 //
 
     // Is triggered when a product is created
+    // BK Ok - Event
     event Created(address indexed _creator, bytes32 indexed _regName, address indexed _kAddr);
     
     // Logged upon receiving a deposit
+    // BK Ok - Event
     event Deposit(address indexed _from, uint _value);
     
     // Logged upon a withdrawal
+    // BK Ok - Event
     event Withdrawal(address indexed _by, address indexed _to, uint _value);
 
 //
@@ -463,11 +531,16 @@ contract Factory is RegBase
 //
 
     // To check that the correct fee has bene paid
+    // BK Ok
     modifier pricePaid() {
+        // BK Ok
         require(msg.value == value);
+        // BK Ok
         if(msg.value > 0)
             // Log deposit if fee was paid
+            // BK Ok - Log event
             Deposit(msg.sender, msg.value);
+        // BK Ok
         _;
     }
 
@@ -482,38 +555,51 @@ contract Factory is RegBase
     /// owner
     /// @dev On 0x0 value for _owner or _creator, ownership precedence is:
     /// `_owner` else `_creator` else msg.sender
+    // BK Ok - Constructor
     function Factory(address _creator, bytes32 _regName, address _owner)
         public
+        // BK Ok - Owner assigned to _owner, _creator or msg.sender
         RegBase(_creator, _regName, _owner)
     {
         // nothing left to construct
     }
     
+    // BK Ok
     function ()
         public
+        // BK Ok
         payable
     {
+        // BK Ok - Log event
         Deposit(msg.sender, msg.value);
     }
 
     /// @notice Set the product creation fee
     /// @param _price The desired fee in wei
+    // BK Ok - Only owner can execute
     function set(uint _price)
         public
+        // BK Ok
         onlyOwner
         returns (bool)
     {
+        // BK Ok
         value = _price;
+        // BK Ok
         return true;
     }
 
     /// @notice Send contract balance to `owner`
+    // BK Ok - Anyone can call this, but the amount is transferred to the `owner`
     function withdrawAll()
         public
         returns (bool)
     {
+        // BK Ok - Log event
         Withdrawal(msg.sender, owner, this.balance);
+        // BK Ok - Owner sent balance
         owner.transfer(this.balance);
+        // BK Ok
         return true;
     }
 
@@ -1045,6 +1131,7 @@ See MIT Licence for further details.
 
 \******************************************************************************/
 
+// BK Ok - Duplicate of same contract above
 contract Value is RegBase
 {
     bytes32 constant public VERSION = "Value v0.4.0";
@@ -1068,6 +1155,7 @@ contract Value is RegBase
 }
 
 
+// BK Ok - Duplicate of same contract above
 contract ValueFactory is Factory
 {
 //
@@ -1110,6 +1198,7 @@ contract ValueFactory is Factory
         pricePaid
         returns (address kAddr_)
     {
+        // BK Ok
         kAddr_ = address(new Value(msg.sender, _regName, _owner));
         Created(msg.sender, _regName, kAddr_);
     }
