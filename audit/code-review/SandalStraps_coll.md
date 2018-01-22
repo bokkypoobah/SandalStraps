@@ -609,6 +609,7 @@ contract Factory is RegBase
     /// @param _owner An address of a third party owner.  Will default to
     /// msg.sender if 0x0
     /// @return kAddr_ The address of the new product contract
+    // BK Ok
     function createNew(bytes32 _regName, address _owner)
         public payable returns(address kAddr_);
 }
@@ -649,6 +650,7 @@ See MIT Licence for further details.
 
 \******************************************************************************/
 
+// BK Ok
 contract Registrar is RegBase
 {
 
@@ -657,6 +659,7 @@ contract Registrar is RegBase
 //
 
     /// @return The contract version number
+    // BK Ok
     bytes32 constant public VERSION = "Registrar v0.4.0";
 
 //
@@ -811,6 +814,7 @@ contract Registrar is RegBase
 }
 
 
+// Deployed on live chain at 0xDFd6dCCF429Fe7d4e8bba3f9c29c2C7CbA4f52EF
 contract RegistrarFactory is Factory
 {
 //
@@ -851,102 +855,6 @@ contract RegistrarFactory is Factory
         returns(address kAddr_)
     {
         kAddr_ = address(new Registrar(msg.sender, _regName, _owner));
-        Created(msg.sender, _regName, kAddr_);
-    }
-}
-
-
-
-/******************************************************************************\
-
-file:   Value.sol
-ver:    0.4.0
-updated:5-Nov-2017
-author: Darryl Morris (o0ragman0o)
-email:  o0ragman0o AT gmail.com
-
-This file is part of the SandalStraps framework
-
-`Value` is a SandalStraps Registrar compliant ownable metric contract.
-It can be set by the owner and `value()` read publicly returning a `uint256`
-value.
-The `function value() returns (uint);` API is intended as a modualar parameter
-or value source for other utilising contracts. 
-
-This software is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-See MIT Licence for further details.
-<https://opensource.org/licenses/MIT>.
-
-\******************************************************************************/
-
-contract Value is RegBase
-{
-    bytes32 constant public VERSION = "Value v0.4.0";
-    uint public value;
-
-    function Value(address _creator, bytes32 _regName, address _owner)
-        public
-        RegBase(_creator, _regName, _owner)
-    {
-        // nothing to construct
-    }
-    
-    function set(uint _value)
-        public
-        onlyOwner
-        returns (bool)
-    {
-        value = _value;
-        return true;
-    }
-}
-
-
-contract ValueFactory is Factory
-{
-//
-// Constants
-//
-
-    /// @return registrar name
-    bytes32 constant public regName = "value";
-
-    /// @return version string
-    bytes32 constant public VERSION = "ValueFactory v0.4.0";
-
-//
-// Function
-//
-
-    /// @param _creator The calling address passed through by a factory,
-    /// typically msg.sender
-    /// @param _regName A static name referenced by a Registrar
-    /// @param _owner optional owner address if creator is not the intended
-    /// owner
-    /// @dev On 0x0 value for _owner or _creator, ownership precedence is:
-    /// `_owner` else `_creator` else msg.sender
-    function ValueFactory(address _creator, bytes32 _regName, address _owner)
-        public
-        Factory(_creator, regName, _owner)
-    {
-        _regName; // Not passed to super. Quiet compiler warning
-    }
-
-    /// @notice Create a new product contract
-    /// @param _regName A unique name if the the product is to be registered in
-    /// a SandalStraps registrar
-    /// @param _owner An address of a third party owner.  Will default to
-    /// msg.sender if 0x0
-    /// @return kAddr_ The address of the new product contract
-    function createNew(bytes32 _regName, address _owner)
-        public
-        payable
-        pricePaid
-        returns (address kAddr_)
-    {
-        kAddr_ = address(new Value(msg.sender, _regName, _owner));
         Created(msg.sender, _regName, kAddr_);
     }
 }
@@ -1056,7 +964,7 @@ contract BytesMap is RegBase
     }
 }
 
-
+// Deployed on live chain at 0x7d51af57518f4cdfcfbbd38f93758f92cc218ba1
 contract BytesMapFactory is Factory
 {
 //
@@ -1111,7 +1019,7 @@ contract BytesMapFactory is Factory
 
 file:   Value.sol
 ver:    0.4.0
-updated:5-Nov-2017
+updated:26-Nov-2017
 author: Darryl Morris (o0ragman0o)
 email:  o0ragman0o AT gmail.com
 
@@ -1129,13 +1037,24 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See MIT Licence for further details.
 <https://opensource.org/licenses/MIT>.
 
+Release Notes
+-------------
+* Using Factory 0.4.0 for `withdrawAll()` instead of `withdraw(<value>)`
+* changed from `fee` to `price`
+* pragma solidity 0.4.17 
+* added `decimals` and `function setDecimals(uint8)`
+
 \******************************************************************************/
 
-// BK Ok - Duplicate of same contract above
 contract Value is RegBase
 {
     bytes32 constant public VERSION = "Value v0.4.0";
+    
+    /// @return The current set value
     uint public value;
+    
+    /// @return The fix poitn decimal place
+    uint8 public decimals;
 
     function Value(address _creator, bytes32 _regName, address _owner)
         public
@@ -1144,6 +1063,9 @@ contract Value is RegBase
         // nothing to construct
     }
     
+    /// @notice Set the value to `_value`
+    /// @param _value An unsigned integer
+    /// @return Boolean success value
     function set(uint _value)
         public
         onlyOwner
@@ -1152,10 +1074,21 @@ contract Value is RegBase
         value = _value;
         return true;
     }
+
+    /// @notice Set the decimal places to `_decimal`
+    /// @param _decimals A fixed point decimal place value
+    /// @return Boolean success value
+    function setDecimals(uint8 _decimals)
+        public
+        onlyOwner
+        returns (bool)
+    {
+        decimals = _decimals;
+        return true;
+    }
 }
 
-
-// BK Ok - Duplicate of same contract above
+// Deployed on live chain at 0x96916b453016feE13f5490d74984f485b484D355
 contract ValueFactory is Factory
 {
 //
@@ -1722,6 +1655,7 @@ contract SandalStraps is
 }
 
 
+// Deployed on live chain at 0xBFAa15b22dc8130816D27961834Bc9c7f5EFDA8c
 contract SandalStrapsFactory is Factory
 {
 //

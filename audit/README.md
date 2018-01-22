@@ -25,11 +25,9 @@
   * [ ] contract Factory is RegBase
   * [ ] contract Registrar is RegBase
   * [ ] contract RegistrarFactory is Factory
-  * [ ] contract Value is RegBase
-  * [ ] contract ValueFactory is Factory
   * [ ] contract BytesMap is RegBase
   * [ ] contract BytesMapFactory is Factory
-  * [x] contract Value is RegBase (duplicate)
-  * [x] contract ValueFactory is Factory (duplicate)
+  * [ ] contract Value is RegBase
+  * [ ] contract ValueFactory is Factory
   * [ ] contract SandalStraps is ReentryProtected, RegBase, OwningItfc, WithdrawableMinItfc
   * [ ] contract SandalStrapsFactory is Factory
